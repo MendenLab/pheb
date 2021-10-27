@@ -11,7 +11,7 @@ library(ELMER.data)
 library(ELMER)
 #---> generateing this here #load("metadata/summaries/df_patterns_updated.RData") # df$id, df_pattern, df_pattern_gex, df_pattern_hits, df_pattern_hits_validated
 
-if(F){ # make: df$id, df_pattern, df_pattern_gex, df_pattern_hits, df_pattern_hits_validated
+if(TRUE){ # make: df$id, df_pattern, df_pattern_gex, df_pattern_hits, df_pattern_hits_validated
        # Summarize elmer
   # get tcga patterns
   tcga_p <- list(); for(type in types){
