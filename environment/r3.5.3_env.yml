@@ -1,0 +1,11 @@
+name: pheb_r3.5.3
+channels:
+  - defaults
+  - conda-forge
+  - bioconda
+dependencies:
+  - r-base=3.5.3
+  - pip
+  - git
+  - rstudio
+prefix: ~/miniconda3/envs/pheb_r3.5.3

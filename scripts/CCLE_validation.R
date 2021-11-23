@@ -74,7 +74,7 @@ samples <- lapply(
 
 ### Import the methylation data
 cancer.type <- which.cancer.type
-library(methylKit, lib.loc = "~/R/x86_64-redhat-linux-gnu-library/3.6")
+library(methylKit)
 sample_list <- list.files("data/RRBS/", pattern = "sorted.bam", full.names = T)
 sample_list <- sample_list[unlist(lapply(1:length(sample_list),function(i) any(unlist(lapply(samples[[cancer.type]], function(x) grepl(x,sample_list[i],fixed=T))))))] # only for special cancer type
 sample_list <- sample_list[file.info(sample_list)$size > 100] # filter for size

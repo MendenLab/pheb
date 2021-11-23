@@ -391,8 +391,6 @@ if(TRUE){ # SUMMARIZE elmer results
   ### look for distance to drug targets from hits ########################################################################################################################
   load("metadata/summaries/df_patterns_updated_onlytumors.RData") # df$id, df_pattern, df_pattern_gex, df_pattern_hits, df_pattern_hits_validated
   library(OmnipathR)
-  #library(STRINGdb, lib.loc = "~/R/x86_64-redhat-linux-gnu-library/3.6/")
-  #string_db <- STRINGdb$new( version="10", species=9606, score_threshold=200, input_directory="")
   
   interactions <- import_Omnipath_Interactions()
   
