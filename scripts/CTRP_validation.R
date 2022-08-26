@@ -1,13 +1,8 @@
 savepath <- "metadata"
-
-source("R/script_params.R")
-load(paste("metadata/cosmic.RData","",sep=''))
-types <- names(table(cosmic$tissue)[table(cosmic$tissue) > 15 & table(cosmic$tissue) <100])
-
-
+path <- "/storage/groups/cbm01/workspace/alexander.ohnmacht/BEST/data/CCLE/"
 if(!file.exists(paste0(savepath, "/ctrp_validation.RData"))){
   which.cancer.type <- script_params(vector = types,
-                                     submission = T, args = NA, parallel = F) #index for cancer type ! was args[2], number of containers
+                                     submission = T, args = NA, parallel = F)
   ccle <- init_annotations_preprocess(path.to.drugs_original = path,
                                       path.to.cosmic = "data/cosmic.RData")
   msamples$name <- toupper(gsub(" ","",gsub("[[:punct:]]", "", msamples$Cell_Line)))

@@ -1,9 +1,3 @@
-source("R/script_params.R")
-load(paste("data/cosmic.RData","",sep=''))
-types <- names(table(cosmic$tissue)[table(cosmic$tissue) > 15 & table(cosmic$tissue) <100])
-which.cancer.type <- script_params(vector = "BRCA", # any cancer type works
-                                   submission = T, args = 1, parallel = F)
-
 # Create annotation objects for GDSC drugs and methylation array
 ANN <- init_annotations(which.cancer.type,
                         drug=F,
@@ -22,13 +16,13 @@ names_type <- function(can_ty){
   nam <- ANN$cosmic[ANN$cosmic$tissue==can_ty & !is.na(ANN$cosmic$tissue),"cosmic_id"]
   return(nam)}
 
+
 ### Import drug response ####
 #drugs_original <- as.data.frame(read.csv("data/GDSC_drugs/PANCANCER_IC_Thu Aug  1 12_17_03 2019.csv"))
 #drugs_original_original <- as.data.frame(read.csv("data/GDSC_drugs/PANCANCER_IC_Thu Aug  1 13_41_49 2019.csv"))
-drugs_original <- read_excel("data/GDSC_drugs/GDSC2_fitted_dose_response_17Jul19.xlsx")
-drugs_original_original <- read_excel("data/GDSC_drugs/GDSC1_fitted_dose_response_17Jul19.xlsx")
+drugs_original <- read_excel("data/GDSC2_fitted_dose_response_17Jul19.xlsx")
+drugs_original_original <- read_excel("data/GDSC1_fitted_dose_response_17Jul19.xlsx")
 ########################
-
 
 
 ### Preprocess ####
@@ -46,8 +40,7 @@ drugs_spread <- spread(drugs_2, COSMIC_ID, AUC)
 #drugs_spread <- drugs_spread[-1]
 ###################
 
-
-### Create obverables for cell lines ####
+### Create ids for cell lines ####
 FEATURE <- "MY_ID"
 for(i in 1:nrow(cancer_types)){
   response <- as.data.frame(drugs_spread[FEATURE])
@@ -62,8 +55,8 @@ for(i in 1:nrow(cancer_types)){
     }
   }
   row.names(response) = response[,FEATURE]
-  response <- response[-1] # moved the FEATURE column to the rownames
-  response <- as.data.frame(t(response)) # transpose such that cell lines are rows
+  response <- response[-1]
+  response <- as.data.frame(t(response))
   filename <- paste(paste("metadata/GDSC_create_drugs_AUC_2/",paste("response",FEATURE,sep = '_'), sep=''),"_",cancer_types[i,1],".RData", sep='')
   print(filename)
   save(response, file = filename)

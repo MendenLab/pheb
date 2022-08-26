@@ -1,0 +1,10 @@
+data/*
+!data/.gitkeep
+!data/cosmic.RData
+metadata/*
+!metadata/.gitkeep
+!metadata/paths.R
+!metadata/chr_names.txt
+pheb.Rproj
+**/.DS_Store
+

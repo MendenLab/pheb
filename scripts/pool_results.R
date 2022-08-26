@@ -1,15 +1,6 @@
-#!/usr/bin/env Rscript
-# patternclustering_gdsc.R
-
-args <- as.numeric(commandArgs(trailingOnly = TRUE))
-print(paste0("Running with arguments: ",""))
-print(args)
-source("R/script_params.R")
-load(paste("data/cosmic.RData","",sep=''))
 library(MultiAssayExperiment)
 library(ELMER.data)
 library(ELMER)
-#---> generateing this here #load("metadata/summaries/df_patterns_updated.RData") # df$id, df_pattern, df_pattern_gex, df_pattern_hits, df_pattern_hits_validated
 
 if(TRUE){ # make: df$id, df_pattern, df_pattern_gex, df_pattern_hits, df_pattern_hits_validated
        # Summarize elmer
@@ -154,15 +145,6 @@ if(TRUE){ # make: df$id, df_pattern, df_pattern_gex, df_pattern_hits, df_pattern
 }
 
 
-
-
-
-
-# list_cancertypes is gex data
-# results_collected is meth data
-
-###########
-##
 ## This makes post analyses after building df with dDMR-search using scripts for DMR calling.
 ## Further data generated taht is imported here:
 ## elmer.R for meth-gex associations in cell lines and tumours
@@ -190,13 +172,6 @@ library(gridExtra)
 library(ggforce)
 library(pals)
 library(ComplexHeatmap)
-load(paste("metadata/cosmic.RData","",sep=''))
-types <- names(table(cosmic$tissue)[table(cosmic$tissue) > 15 & table(cosmic$tissue) <100])
-load("metadata/summaries/df_patterns_updated_onlytumors.RData") # df$id, df_pattern, df_pattern_gex, df_pattern_hits, df_pattern_hits_validated
-#cancertypes_meth <- cancertypes # rewrite because then cancertypes can be gene expression
-source("R/script_params.R", local = TRUE)
-script_params(vector = NULL, submission = F, args = 1) # for importing libraries
-
 METADATA_TCGA <- "metadata/TCGA_onlytumors/"
 
 if(TRUE){
@@ -250,6 +225,7 @@ if(TRUE){
 ### BUILTS df and plots it,  df_gex below
 ### NEEDS: ANN, RESULTS
 if(T){
+  counter = 1
   for(i in types){
     print(i)
     cpg_asso <- loadRData(paste0("metadata/results_dmp_new_combp/",i,".regions.RData"))
@@ -279,13 +255,14 @@ if(T){
     cpg_asso$methS <- unlist(lapply(cpg_asso$metht, median))
     #df <- cpg_asso[abs(cpg_asso$effectsize) <4,]
     
-    if(i == "ALL"){
+    if(counter == 1){
       df_new <- cpg_asso
     } else {
       df_new <- rbind(cpg_asso, df_new)
     }
+    counter = i+1
   }
-  ###!!!!!!!!!! df <- df_new
+  df <- df_new
   
   # add cancer genes
   gene_list <- unlist(lapply(strsplit("ABL1 CCDC6 EIF1AX HIST1H2BD MED12 POLE SMARCB1 UPF3A ACO1 CCND1 EIF2S2 HIST1H3B MED23 POT1 SMC1A VHL ACVR1 CD1D ELF3 HIST1H4E MEN1 POU2AF1 SMC3 WASF3 ACVR1B CD58 EML4 HLA-A MET POU2F2 SMO WT1 ACVR2A CD70 EP300 HLA-B MGA PPM1D SMTNL2 XIRP2 ACVR2B CD79A EPAS1 HLA-C MLH1 PPP2R1A SNX25 XPO1 ADNP CD79B EPHA2 HNF1A MPL PPP6C SOCS1 ZBTB20 AJUBA CDC27 EPS8 HOXB3 MPO PRDM1 SOX17 ZBTB7B AKT1 CDC73 ERBB2 HRAS MSH2 PRKAR1A SOX9 ZFHX3 ALB CDH1 ERBB3 IDH1 MSH6 PSG4 SPEN ZFP36L1 ALK CDH10 ERCC2 IDH2 MTOR PSIP1 SPOP ZFP36L2 ALPK2 CDK12 ERG IKBKB MUC17 PTCH1 SPTAN1 ZFX AMER1 CDK4 ESR1 IKZF1 MUC6 PTEN SRC ZMYM3 APC CDKN1A ETNK1 IL6ST MXRA5 PTPN11 SRSF2 ZNF471 APOL2 CDKN1B EZH2 IL7R MYD88 PTPRB STAG2 ZNF620 ARHGAP35 CDKN2A FAM104A ING1 MYOCD QKI STAT3 ZNF750 ARHGAP5 CDKN2C FAM166A INTS12 MYOD1 RAC1 STAT5B ZNF800 ARID1A CEBPA FAM46C IPO7 NBPF1 RACGAP1 STK11 ZNRF3 ARID1B CHD4 FAT1 IRF4 NCOR1 RAD21 STK19 ZRSR2 ARID2 CHD8 FBXO11 ITGB7 NF1 RASA1 STX2 ARID5B CIB3 FBXW7 ITPKB NF2 RB1 SUFU ASXL1 CIC FGFR1 JAK1 NFE2L2 RBM10 TBC1D12 ATM CMTR2 FGFR2 JAK2 NIPBL RET TBL1XR1 ATP1A1 CNBD1 FGFR3 JAK3 NOTCH1 RHEB TBX3 ATP1B1 CNOT3 FLG KANSL1 NOTCH2 RHOA TCEB1 ATP2B3 COL2A1 FLT3 KCNJ5 NPM1 RHOB TCF12 ATRX COL5A1 FOSL2 KDM5C NRAS RIT1 TCF7L2 AXIN1 COL5A3 FOXA1 KDM6A NSD1 RNF43 TCP11L2 AXIN2 CREBBP FOXA2 KDR NT5C2 RPL10 TDRD10 AZGP1 CRLF2 FOXL2 KEAP1 NTN4 RPL22 TERT B2M CSDE1 FOXQ1 KEL NTRK3 RPL5 TET2 BAP1 CSF1R FRMD7 KIT NUP210L RPS15 TG BCLAF1 CSF3R FUBP1 KLF4 OMA1 RPS2 TGFBR2 BCOR CTCF GAGE12J KLF5 OR4A16 RPS6KA3 TGIF1 BHMT2 CTNNA1 GATA1 KLHL8 OR4N2 RREB1 TIMM17A BIRC3 CTNNB1 GATA2 KMT2A OR52N1 RUNX1 TNF BMPR2 CUL3 GATA3 KMT2B OTUD7A RXRA TNFAIP3 BRAF CUL4B GNA11 KMT2C PAPD5 SELP TNFRSF14 BRCA1 CUX1 GNA13 KMT2D PAX5 SETBP1 TOP2A BRCA2 CYLD GNAQ KRAS PBRM1 SETD2 TP53 BRD7 DAXX GNAS KRT5 PCBP1 SF3B1 TRAF3 C3orf70 DDX3X GNB1 LATS2 PDAP1 SGK1 TRAF7 CACNA1D DDX5 GNPTAB LCTL PDGFRA SH2B3 TRIM23 CALR DIAPH1 GPS2 LZTR1 PDSS2 SLC1A3 TSC1 CARD11 DICER1 GTF2I MAP2K1 PDYN SLC26A3 TSC2 CASP8 DIS3 GUSB MAP2K2 PHF6 SLC44A3 TSHR CBFB DNM2 H3F3A MAP2K4 PHOX2B SLC4A5 TTLL9 CBL DNMT3A H3F3B MAP2K7 PIK3CA SMAD2 TYRO3 CBLB EEF1A1 HIST1H1C MAP3K1 PIK3R1 SMAD4 U2AF1 CCDC120 EGFR HIST1H1E MAX PLCG1 SMARCA4 UBR5",' '),function(x) gsub(" ","",paste(x,' ',sep=''))))
@@ -298,9 +275,9 @@ if(T){
   df$Gene <- df$gene
   df$gene <- unlist(lapply(1:nrow(df), function(i) paste0(df$gene[i],"---",df$drug[i])))
   df$cancergene <- df$Gene %in% gene_list
-  ncg <- read.csv("metadata/cancergenes_list.txt", sep = "\t")
+  #ncg <- read.csv("metadata/cancergenes_list.txt", sep = "\t")
   df$GGene <- unlist(lapply(df$Gene, function(x) x[1]))
-  df$ncg <- df$GGene %in% unique(as.character(ncg$X711_Known_Cancer_Genes))
+  df$ncg <- df$GGene %in% unique(as.character(gene_list))
   #df$cor is added in hits_synergy since mining frames
   
   ## SAVE IMAGE save.image(file = "/storage/groups/cbm01/workspace/alexander.ohnmacht/BEST/.RData")
@@ -312,16 +289,18 @@ if(T){
 
 ### Expression dataframe
 if(T){
+  counter = 1
   for(i in types){
     print(i)
     RESULTS <- loadRData(paste0("metadata/results_deg/",
                                 i,".genes.RData"))
     RESULTS$gex_asso$annotation <- rep(i, nrow(RESULTS$gex_asso))
-    if(i == "ALL"){
+    if(counter == 1){
       df_gex <- RESULTS$gex_asso
     } else {
       df_gex <- rbind(RESULTS$gex_asso, df_gex)
     }
+    counter = i+1
   }
 }
 ################################################################################################

@@ -2,7 +2,6 @@ init_annotations_preprocess <- function(
   ### Initialization of Annotation Object (containing manifests and functions) for METHYLATION
   ######################################################
   path.to.cosmic="metadata/cosmic.RData", 
-  #path.to.reference_original="../pharmaco1/data_original/GDSC_methylation/manifests/HumanMethylation450_15017482_v1-2.csv", # use GDSC meth
   path.to.drugs_original="data/CCLE/",
   drug=T,
   meth=T,

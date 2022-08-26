@@ -14,7 +14,6 @@ source("R/script_params.R")
 library(tidyverse)
 chr_names <- read.csv("metadata/chr_names.txt", sep = "\t", header = F) %>% # for mapping NCBI to UCSC chromosomes
   mutate(V1 = as.character(V1)) %>% mutate(V2 = as.character(V2)); chr_names$V2[chr_names$V2 == ""] <- "none"
-dim(df)
 
 ### Prepare gene expression of CCLE ###
 if(!file.exists("data/CCLE/CCLE_RNAseq_processed.RData")){
@@ -48,10 +47,6 @@ if(!file.exists("data/CCLE/CCLE_RNAseq_processed.RData")){
 #######################################
 
 
-types <- names(table(cosmic$tissue)[table(cosmic$tissue) > 15 & table(cosmic$tissue) <100])
-which.cancer.type <- script_params(vector = types, submission = T, args = args, parallel = F)
-
-print(which.cancer.type)
 msamples <- read.csv(paste0(path,"SraRunTable.txt"))
 ccle <- init_annotations_preprocess(path.to.drugs_original = path,
                                     path.to.cosmic = "data/cosmic.RData")

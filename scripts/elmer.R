@@ -1,13 +1,3 @@
-#!/usr/bin/env Rscript
-
-
-args <- as.numeric(commandArgs(trailingOnly = TRUE))
-print(paste0("Running with arguments: ",""))
-print(args)
-source("R/script_params.R")
-load(paste("metadata/cosmic.RData","",sep=''))
-use_tcga <- TRUE # either perform ELMER analysis for GDSC or TCGA
-
 library(MultiAssayExperiment)
 library(ELMER.data)
 library(ELMER)
@@ -16,29 +6,59 @@ library(tidyr)
 library(tidyverse)
 library(biomaRt)
 
-### Customize types
-types <- names(table(cosmic$tissue)[table(cosmic$tissue) > 15 & table(cosmic$tissue) <100])
-which.cancer.type <- script_params(vector = types, # cancer types
-                                   submission = T, 
-                                   args = args, 
-                                   parallel = F) 
-###################
-
-
-type <- types[as.numeric(args)] # plus how many already done
+type <- which.cancer.type
 message(paste0("STARTED: ",type,"(number:", type,")"))
 print(paste0("STARTED: ",type,"(number:", type,")"))
 
 human = useMart("ensembl", dataset = "hsapiens_gene_ensembl")
 genes = getLDS(attributes = c("hgnc_symbol"), values = colnames(tcga_gex_elmer) , mart = human, attributesL = c("ensembl_gene_id"), martL = human, uniqueRows=T)
 # ALL,KIRC,MM have no methylation data
-# BLCA has no columns in gene expression data
 # LAML has no rows in methylation data
 # NB,SCLC have no methylation data -> not in TCGA
 
+
+results_collected <- list()
+results_collected[[type]] <- tryCatch(loadRData(
+  paste("/lustre/groups/cbm01/workspace/alexander.ohnmacht/BEST/metadata/results_dmp/","/","/",
+        type,"_","GDSC","_meth_results_",as.character(i),".RData",sep="")), error = function(e) NULL)
+results_collected[[type]]$DAT$bem <- DAT$bem
+
+
+if(T){
+  cpg_asso <- loadRData(paste0("metadata/results_dmp_new_combp/",type,".regions.RData"))
+  RESULTS <- loadRData(paste0("BEST/metadata/results_deg/",type,".genes.RData"))
+  ANN <- RESULTS$ANN
+  cpg_asso$effectsize <- unlist(lapply(cpg_asso$effectsizes, function(x) mean(na.omit(x))))
+  cpg_asso$P.Value <- unlist(lapply(cpg_asso$pvalue, mean))
+  cpg_asso$confidence <- -cpg_asso$nprobes
+  cpg_asso$gene <- lapply(cpg_asso$gene, function(x) unique(x)[1])
+  cpg_asso$Drug <- cpg_asso$drug
+  cpg_asso$drug <- unlist(lapply(cpg_asso$drug, function(x) ANN$drugs_info$DRUG_NAME[ANN$drugs_info$DRUG_ID == strsplit(x,"-")[[1]][1]][1]))
+  cpg_asso$annotation <- rep(i, nrow(cpg_asso))
+  cpg_asso$metht <- lapply(1:length(cpg_asso$cpg), function(y){
+    tmp <- c()
+    drugresponse <- cpg_asso$Drug[y]
+    for(i in 1:length(cpg_asso$cpg[y])){
+      if(!(unlist(cpg_asso$cpg[y]))[i] %in% colnames(RESULTS$DAT$meth)){
+        under <- NA
+        over <- NA
+      }else{
+        under<-length(which(RESULTS$DAT$meth[!is.na(RESULTS$DAT$resp[,drugresponse]),(unlist(cpg_asso$cpg[y]))[i]]>0.7));
+        over<-length(which(RESULTS$DAT$meth[!is.na(RESULTS$DAT$resp[,drugresponse]),(unlist(cpg_asso$cpg[y]))[i]]<0.3));
+      }
+      tmp[i] <- min(na.omit(under),na.omit(over))
+    }
+    return(tmp)
+  })
+  cpg_asso$methS <- unlist(lapply(cpg_asso$metht, median))
+  
+  df <- cpg_asso
+}
+
+  
+
 if(T){
   which.cancer.type <- type
-  #which.cancer.type <- "COREAD"
   S <- get_data_for_scatter(df = df, results_collected = results_collected, 
                             which.cancer.type = which.cancer.type)
  basedir <- paste0("metadata/elmer",if(use_tcga){"_onlytumors"}else{"_cl"},"/",which.cancer.type,"/")
@@ -252,6 +272,3 @@ if(T){
   print(paste0("FINISHEDCT: ",which.cancer.type,"(number:", which.cancer.type,")"))
   message(paste0("FINISHEDCT: ",which.cancer.type,"(number:", which.cancer.type,")"))
 } #cancer type end
-
-
-

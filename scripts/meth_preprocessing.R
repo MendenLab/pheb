@@ -1,5 +1,3 @@
-
-
 ## load packages required for analysis
 library(limma)
 library(minfi)
@@ -8,10 +6,9 @@ library(IlluminaHumanMethylation450kmanifest)
 library(ChAMP)
 library(readxl)
 
-load("data/cosmic.RData")
 ann450k <- getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)
-RGset <- read.metharray.exp("/storage/groups/cbm01/datasets/alexander.ohnmacht/GSE68379_RAW/", verbose=T) # read the test idat files from the test folder
-xReactiveProbes <- read_excel("/storage/groups/cbm01/datasets/alexander.ohnmacht/48639-non-specific-probes-Illumina450k.xlsx") # filter cross-reactive probes
+RGset <- read.metharray.exp("data/GSE68379_RAW/", verbose=T) # read the test idat files from the test folder
+xReactiveProbes <- read_excel("/metadata/48639-non-specific-probes-Illumina450k.xlsx") # filter cross-reactive probes
 
 sentrix <- unlist(lapply(RGset@colData@rownames, function(x) paste(strsplit(x, "_")[[1]][-1],collapse="_")))
 sample_sheet <- read_excel("data/methSampleId_2_cosmicIds.xlsx")
@@ -49,5 +46,5 @@ stopifnot(nrow(betas) == 1028)
 
 for(which in all_cancer_types){
   betas_type <- betas[as.character(cancer_types) == which,]
-  save(betas_type , file = paste("/storage/groups/cbm01/datasets/alexander.ohnmacht/GDSC/","methyl_processed_",as.character(which),".RData",sep=""))
+  save(betas_type , file = paste("metadata/","methyl_processed_",as.character(which),".RData",sep=""))
 }

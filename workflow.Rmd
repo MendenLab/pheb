@@ -1,0 +1,75 @@
+---
+title: "Epigenetic drug response biomarkers workflow"
+author: "Alexander J. Ohnmacht and Jan Tabeling"
+date: "26/08/2022"
+output: html_document
+---
+
+For all chuncks, firest set relevant paths for analysis. Note that the datasets for each step are publicly available and have to be downloaded to the corresponding paths prior to the analysis run.
+```{r params, eval=FALSE}
+source("R/script_params.R")
+load(paste("data/cosmic.RData","",sep=''))
+types <- names(table(cosmic$tissue)[table(cosmic$tissue) > 15 & table(cosmic$tissue) < 100])
+which.cancer.type <- script_params(vector = "SKCM", # specify cancer type
+                                   submission = T, 
+                                   args = 1, 
+                                   parallel = F)
+```
+
+Import drug HTS cell viability values from GDSC1/2 and groups into cancer types in `metadata/GDSC_create_drugs_AUC_2/response*`.
+```{r drug_preprocessing.R, eval=FALSE}
+source("scripts/drug_preprocessing.R")
+```
+
+Import raw GDSC methylation data, preprocesses and groups into cancer types in `metadata/GDSC/methyl_preprocessed*`.
+```{r meth_preprocessing, eval=FALSE}
+source("scripts/meth_preprocessing.R")
+```
+
+Perform drug differentially methylated probe (DMP) adn differential gene expression (DEG) analysis on the GDSC data running for each cancer type and drug separately.
+```{r cpg_analyze_dmp, eval=FALSE}
+drugid <- "1529" # specify drug ID
+DMP_GDSC <- T
+DEG_GDSC <- T
+source("scripts/cpg_analyze_dmp.R")
+```
+
+Run comb-p algorithm for calling drug DMRs on spatially correlated p-values from DMP analysis.
+```{r cpg_analyze_compp.R, eval=FALSE}
+source("scripts/cpg_analyze_compp.R")
+```
+
+Download, process and store TCGA methylation and gene expression data.
+```{r cpg_analyze_tcga.R, eval=FALSE}
+source("scripts/cpg_analyze_tcga.R")
+```
+
+Run correlation analysis between drug DMRs and proximal gene expression, for each GDSC and TCGA datasets.
+```{r elmer.R, eval=FALSE}
+use_tcga <- TRUE # either perform ELMER analysis for GDSC or TCGA
+source("scripts/elmer.R")
+
+use_tcga <- FALSE # either perform ELMER analysis for GDSC or TCGA
+source("scripts/elmer.R")
+```
+
+Compare CTRP drug HTS to drug DMRs.
+```{r CTRP_validation.R, eval=FALSE}
+source("scripts/CTRP_validation.R")
+```
+
+Import CCLE RRBS data and compare with drug DMRs. Note that this step requires the sorted `.bam` obtained from Bismarck in `data/RRBS/`.
+```{r CCLE_validation.R, eval=FALSE}
+source("scripts/CCLE_validation.R")
+```
+
+Screen for associations between patient drug DMRs and somatic mutations curated by the GDSC.
+```{r hits_genomics.R, eval=FALSE}
+source("scripts/hits_genomics.R")
+```
+
+Combine metadata for the results object, finding overlaps between GDSC and TCGA for patient drug DMRs.
+```{r pool_results.R, eval=FALSE}
+source("scripts/pool_results.R")
+```
+
