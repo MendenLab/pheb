@@ -393,7 +393,7 @@ get_data_for_scatter <- function(df = df, results_collected = results_collected,
                                            which.cancer.type,".genes.RData"))$DAT_gex$meth
   RESULTS$gex_asso <- loadRData(paste0("results_deg/",
                                        which.cancer.type,".genes.RData"))$gex_asso
-  #RESULTS$cpg_asso <- loadRData(paste0("/storage/groups/cbm01/workspace/alexander.ohnmacht/BEST/metadata/results_dmp_combp/",which.cancer.type,".regions.RData"))
+  
   dmrs_3 <- unnest(df_fig2, cols = c("cpg","enchancer","dhs","regulator","pvalues","effectsizes","genepos"))
   dmrs_3 <- dmrs_3[!is.na(dmrs_3$pvalues),]
   #dmrs_3$Drug <- unlist(lapply(dmrs_3$drug, function(x) ANN$drugs_info$DRUG_NAME[ANN$drugs_info$DRUG_ID == strsplit(x,"-")[[1]][1]][1]))

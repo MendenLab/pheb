@@ -280,7 +280,6 @@ if(T){
   df$ncg <- df$GGene %in% unique(as.character(gene_list))
   #df$cor is added in hits_synergy since mining frames
   
-  ## SAVE IMAGE save.image(file = "/storage/groups/cbm01/workspace/alexander.ohnmacht/BEST/.RData")
 }
 ################################################################################################
 

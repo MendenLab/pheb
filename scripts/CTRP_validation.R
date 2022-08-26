@@ -1,5 +1,5 @@
 savepath <- "metadata"
-path <- "/storage/groups/cbm01/workspace/alexander.ohnmacht/BEST/data/CCLE/"
+path <- "data/CCLE/"
 if(!file.exists(paste0(savepath, "/ctrp_validation.RData"))){
   which.cancer.type <- script_params(vector = types,
                                      submission = T, args = NA, parallel = F)

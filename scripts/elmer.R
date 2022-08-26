@@ -19,7 +19,7 @@ genes = getLDS(attributes = c("hgnc_symbol"), values = colnames(tcga_gex_elmer) 
 
 results_collected <- list()
 results_collected[[type]] <- tryCatch(loadRData(
-  paste("/lustre/groups/cbm01/workspace/alexander.ohnmacht/BEST/metadata/results_dmp/","/","/",
+  paste("metadata/results_dmp/","/","/",
         type,"_","GDSC","_meth_results_",as.character(i),".RData",sep="")), error = function(e) NULL)
 results_collected[[type]]$DAT$bem <- DAT$bem
 
