@@ -4,7 +4,7 @@ Environment
 --- 
 The analysis can be run in a local virtual [docker](https://docs.docker.com/) environment. For that, first pull the image by typing:
 ```
-docker pull aljoshoh/pheb
+docker pull aljoshoh/pheb_r3.5.3
 ```
 Finally, run the image by:
 ```
