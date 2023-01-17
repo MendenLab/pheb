@@ -68,7 +68,7 @@ response <- prepare_csv(data.Locations = Locations,
 ### Perform the comb-p DMR search
 system(paste("miniconda3/bin/conda init;
               . miniconda3/etc/profile.d/conda.sh;
-              conda activate;
+              conda activate pheb_r3.5.3;
               cd R/;
              ./compp.sh",as.character(which.cancer.type)))
 
