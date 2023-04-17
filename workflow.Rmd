@@ -5,7 +5,7 @@ date: "26/08/2022"
 output: html_document
 ---
 
-For all chuncks, firest set relevant paths for analysis. Note that the datasets for each step are publicly available and have to be downloaded to the corresponding paths prior to the analysis run.
+For all chunks, first set relevant paths for analysis. Note that the datasets for each step are publicly available and have to be downloaded to the corresponding paths prior to the analysis run.
 ```{r params, eval=FALSE}
 source("R/script_params.R")
 load(paste("data/cosmic.RData","",sep=''))
@@ -21,12 +21,12 @@ Import drug HTS cell viability values from GDSC1/2 and groups into cancer types 
 source("scripts/drug_preprocessing.R")
 ```
 
-Import raw GDSC methylation data, preprocesses and groups into cancer types in `metadata/GDSC/methyl_preprocessed*`.
+Import raw GDSC methylation data, reprocesses and group into cancer types in `metadata/GDSC/methyl_preprocessed*`.
 ```{r meth_preprocessing, eval=FALSE}
 source("scripts/meth_preprocessing.R")
 ```
 
-Perform drug differentially methylated probe (DMP) adn differential gene expression (DEG) analysis on the GDSC data running for each cancer type and drug separately.
+Perform drug differentially methylated probe (DMP) and differential gene expression (DEG) analysis on the GDSC data running for each cancer type and drug separately.
 ```{r cpg_analyze_dmp, eval=FALSE}
 drugid <- "1529" # specify drug ID
 DMP_GDSC <- T

@@ -23,6 +23,6 @@ echo ${elementss[@]}
 for element in ${elementss[@]}
 do
 	echo $element
-	combined-pvalues-master/cpv/comb-p pipeline -c 5 --seed 0.001 --dist 200 -p $element.combp --region-filter-p 0.05 --anno mm9 $element
+	combined-pvalues-master/cpv/comb-p pipeline -c 5 --seed 0.001 --dist 1000 -p $element.combp --region-filter-p 0.05 $element &> $element.combp.log
 done
 

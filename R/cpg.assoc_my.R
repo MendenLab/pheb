@@ -61,6 +61,15 @@ cpg.assoc_my <- function(
     covariates <- NULL # added to protect against full removal
   }
   
+  
+  ### include pca componets ####
+  if(pc){
+    beta.val.pca <- prcomp(beta.val)
+    covariates <- cbind(covariates,beta.val.pca$x[,c("PC1","PC2")])
+  }
+  ##############################
+  
+  
   df <- data.frame(matrix(ncol = 3, nrow = 0))
   colnames(df) <- c("P.Value","effectsize","t-value")
   for(i in 1:ncol(beta.val)){ # the main loop with takes up lots of computational time
