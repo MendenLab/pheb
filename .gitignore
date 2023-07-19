@@ -7,4 +7,6 @@ metadata/*
 !metadata/chr_names.txt
 pheb.Rproj
 **/.DS_Store
+processed/*
+!processed/.gitkeep
 
